@@ -43,11 +43,14 @@ class CookieMonster {
     register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
     register_uninstall_hook( __FILE__, array( $this, 'uninstall' ) );
 
+    //Set cookie pref when JavaScript is disabled
+    add_action( 'init', array( $this, 'cookie_pref' ));
+
     //Add the cookie bar markup
     add_action( 'wp_footer', array( $this, 'cookie_bar_markup' ));
 
-    //Set cookie pref when JavaScript is disabled
-    add_action( 'init', array( $this, 'cookie_pref' ));
+    //Add the cookie pref to the <body> class
+    add_filter('body_class', array( $this, 'cookie_class' ));
 
   } // end constructor
 
@@ -121,11 +124,11 @@ class CookieMonster {
   public function cookie_bar_markup() {
 
     //Detect if the cookie pref as already been set
-    $hide_cookie_bar = isset($_COOKIE['cookie-pref']) || current_user_can('manage_options') ? true : false;
+    $hide_cookie_bar = isset($_COOKIE['cookie-pref']) || current_user_can('manage_options') ? 1 : 0;
 
     //Render output with vars
     $this->_render(array(
-      'hide_cookie_bar' => $hide_cookie_bar || $this->cookie_pref
+      'hide_cookie_bar' => $hide_cookie_bar || isset($this->cookie_pref)
     ), realpath(dirname(__FILE__) . '/views/display.php'));
   } // end cookie_bar_markup
 
@@ -136,10 +139,30 @@ class CookieMonster {
 
     //If request has a cookie pref
     if (isset($_GET['cookie-pref'])) {
-      $this->cookie_pref = $_GET['cookie-pref'] ? true : 'false';
+
+      //Use 0 or 1, as setting a cookie to FALSE will delete it
+      $this->cookie_pref = $_GET['cookie-pref'] ? 1 : 0;
       setcookie('cookie-pref', $this->cookie_pref);
     }
-  }
+
+    if (isset($_COOKIE['cookie-pref'])) {
+      // $this->cookie_pref = $_COOKIE['cookie-pref'];
+    }
+  } // end cookie_pref
+
+  /**
+   * Adds a class to the <body> element based on cookie pref
+   */
+  public function cookie_class($classes) {
+
+    //Cookie pref not set
+    if (is_null($this->cookie_pref)) {
+      return $classes;
+    }
+
+    $classes[] = $this->cookie_pref ? 'cookies-allow' : 'cookies-restrict';
+    return $classes;
+  } // end cookie_class
 
   /**
    * Renders the view
@@ -149,7 +172,7 @@ class CookieMonster {
     extract($vars);
     include $file;
     echo ob_get_clean();
-  }
+  } // end _render
 } // end class
 
 $cookie_monster = new CookieMonster();
