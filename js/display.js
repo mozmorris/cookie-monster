@@ -14,24 +14,23 @@
       }, 750);
     };
 
-    //Prepends the Info Bar to the Body element
-    var prepend = function() {
-      $banner.css({ position : 'relative' }).prependTo('body');
-      $banner.on('click', '.hide', setPref);
+    //Detects the cookie pref
+    var onPref = function(e) {
+      e.preventDefault();
+      var pref = $(this).hasClass('allow') ? true : false;
+      setPref(pref);
+      hide();
     };
 
     //Sets user cookie preference
-    var setPref = function(e) {
-      e.preventDefault();
-      var pref = $(this).hasClass('allow') ? true : false;
+    var setPref = function() {
       $.cookie('cookie-pref', pref, { path: '/' });
-      hide();
     };
 
     return {
       init: function(el) {
         $banner = $(el);
-        if ($.cookie('cookie-pref') === null) { prepend(); }
+        $banner.on('click', '.hide', onPref);
       }
     };
   }());

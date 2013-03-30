@@ -1,21 +1,23 @@
 .cookie-monster-banner {
+  bottom: 0;
   color: #eee;
-  background-color: #222;
+  background-image: url(../img/bg.png);
   left: 0;
-  position: absolute;
+  position: fixed;
   overflow: hidden;
-  top: 0;
   width: 100%;
   z-index: 9999;
+}
+
+.cookies-allow .cookie-monster-banner,
+.cookies-restrict .cookie-monster-banner {
+  display: none;
 }
 
 .cookie-monster-banner .inner {
   padding: 10px;
 }
 
-.cookie-monster-banner.hidden { /* sorry ie6 */
-  display: none;
-}
 
 .cookie-monster-banner a {
   color: #3986CD;

@@ -126,9 +126,8 @@ class CookieMonster {
     //Detect if the cookie pref as already been set
     $hide_cookie_bar = isset($_COOKIE['cookie-pref']) || current_user_can('manage_options') ? 1 : 0;
 
-    //Render output with vars
+    //Render output
     $this->_render(array(
-      'hide_cookie_bar' => $hide_cookie_bar || isset($this->cookie_pref)
     ), realpath(dirname(__FILE__) . '/views/display.php'));
   } // end cookie_bar_markup
 
