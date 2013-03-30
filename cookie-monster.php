@@ -146,7 +146,7 @@ class CookieMonster {
     }
 
     if (isset($_COOKIE['cookie-pref'])) {
-      // $this->cookie_pref = $_COOKIE['cookie-pref'];
+      $this->cookie_pref = $_COOKIE['cookie-pref'];
     }
   } // end cookie_pref
 
